@@ -793,8 +793,28 @@ function FluxStore(FluxEventEmitter) {
       this.on('change', callback)
     },
 
-    removeChangeListener: function(callback){
+    removeChangeListener: function(callback) {
       this.removeListener('change', callback)
+    },
+
+    // A helper to add the change listener and remove it when the scope
+    // is destroyed, so we don't go trying to update a scope that
+    // doesn't exist anymore.
+    //
+    bindState: function(scope, callback, options) {
+      var self = this;
+
+      self.addChangeListener(callback);
+      scope.$on('$destroy', function() { self.removeListener(callback) });
+
+      // Save the hassle of having to create a separate function, pass
+      // it in to bindState, and then call it immediately on the scope
+      // to sync - just do this by default. But can be disabled by
+      // passing in {bindImmediately: false} as a third argument to
+      // bindState.
+      //
+      options = options || { bindImmediately: true }
+      if (options.bindImmediately === true) { callback(); }
     }
   });
 }

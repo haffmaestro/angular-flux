@@ -3,7 +3,9 @@ var app = angular.module('todoApp', ['ngFlux']).
   factory('TodoConstants', TodoConstants).
   factory('TodoDispatcher', TodoDispatcher).
   factory('TodoStore', TodoStore).
-  directive('todoList', todoList)
+  directive('todoList', todoList).
+  directive('todoListItem', todoListItem).
+  directive('rawTodoData', rawTodoData)
 
 
 function TodoConstants(FluxUtil) {
@@ -21,24 +23,24 @@ function TodoActions(TodoConstants, TodoDispatcher) {
       });
     },
 
-    removeTodo: function(i) {
+    removeTodo: function(item) {
       TodoDispatcher.handleViewAction({
         actionType: TodoConstants.REMOVE_TODO,
-        index: i
+        item: item
       });
     },
 
-    completeTodo: function(i) {
+    completeTodo: function(item) {
       TodoDispatcher.handleViewAction({
         actionType: TodoConstants.COMPLETE_TODO,
-        index: i
+        item: item
       });
     },
 
-    incompleteTodo: function(i) {
+    incompleteTodo: function(item) {
       TodoDispatcher.handleViewAction({
         actionType: TodoConstants.INCOMPLETE_TODO,
-        index: i
+        item: item
       });
     }
   }
@@ -65,16 +67,19 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
     _todos.push(item);
   }
 
-  function _removeItem(i) {
-    _todos.splice(i, 1);
+  function _removeItem(item) {
+    var index = _todos.indexOf(item);
+    _todos.splice(index, 1);
   }
 
-  function _completeItem(i) {
-    _todos[i].complete = true;
+  function _completeItem(item) {
+    var index = _todos.indexOf(item);
+    _todos[index].complete = true;
   }
 
-  function _incompleteItem(i) {
-    _todos[i].complete = false;
+  function _incompleteItem(item) {
+    var index = _todos.indexOf(item);
+    _todos[index].complete = false;
   }
 
   var store = FluxUtil.createStore({
@@ -91,15 +96,15 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
           break;
 
         case TodoConstants.REMOVE_TODO:
-          _removeItem(action.index);
+          _removeItem(action.item);
           break;
 
         case TodoConstants.COMPLETE_TODO:
-          _completeItem(action.index);
+          _completeItem(action.item);
           break;
 
         case TodoConstants.INCOMPLETE_TODO:
-          _incompleteItem(action.index);
+          _incompleteItem(action.item);
           break;
       }
 
@@ -117,7 +122,6 @@ function todoList(TodoActions, TodoStore) {
     restrict: 'E',
     templateUrl: "todo-list.html",
     controller: function($scope) {
-      $scope.actions = TodoConstants;
       $scope.newTodo = {};
 
       $scope.createTodo = function() {
@@ -125,26 +129,41 @@ function todoList(TodoActions, TodoStore) {
         $scope.newTodo = {};
       };
 
-      $scope.removeTodo = function(todo) {
-        TodoActions.removeTodo($scope.todos.indexOf(todo));
+      TodoStore.bindState($scope, function updateTodosFromStore() {
+        $scope.todos = TodoStore.getTodos();
+      });
+    }
+  }
+}
+
+function todoListItem(TodoActions) {
+  return {
+    restrict: 'E',
+    scope: {todo: '='},
+    templateUrl: "todo-list-item.html",
+    controller: function($scope) {
+      $scope.removeTodo = function() {
+        TodoActions.removeTodo($scope.todo);
       }
 
-      $scope.toggleComplete = function(todo) {
-        var index = $scope.todos.indexOf(todo);
-
-        if (todo.complete) {
-          TodoActions.incompleteTodo(index);
+      $scope.toggleComplete = function() {
+        if ($scope.todo.complete) {
+          TodoActions.incompleteTodo($scope.todo);
         } else {
-          TodoActions.completeTodo(index);
+          TodoActions.completeTodo($scope.todo);
         }
       }
+    }
+  }
+}
 
-      $scope.updateTodosFromStore = function() {
+function rawTodoData(TodoStore) {
+  return {
+    restrict: 'E',
+    templateUrl: "raw-todo-data.html",
+    controller: function($scope) {
+      TodoStore.bindState($scope, function updateTodosFromStore() {
         $scope.todos = TodoStore.getTodos();
-      }
-
-      TodoStore.on('change', function() {
-        $scope.updateTodosFromStore();
       });
     }
   }
