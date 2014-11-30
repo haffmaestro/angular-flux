@@ -6,18 +6,11 @@ see it in action.
 
 `angular-flux.js` contains the pieces that you need to get going with
 the Flux architecture in Angular. Just download it and include it in
-your app with the module `ngFlux`.
+your app with the module `ngFlux`. Install it through bower with
+`bower install angular-flux-helpers --save`.
 
 - `FluxUtil` packages a couple of functions to reduce boilerplate
-- `FluxUtil.defineConstants` defines constants for you, eg:
-```javscript
-app.factory('TodoConstants', function(FluxUtil) {
-  return FluxUtil.defineConstants([
-    'ADD_TODO', 'REMOVE_TODO', 'COMPLETE_TODO', 'INCOMPLETE_TODO',
-    'UPDATE_TITLE', 'MARK_TODOS_COMPLETE', 'CLEAR_COMPLETED'
-  ]);
-}
-```
+- `FluxUtil.defineConstants` defines constants for you.
 - `FluxUtil.createDispatcher` creates a dispatcher from Facebook's
   `dispatcher.js` prototype and adds a `handleViewAction` function to
    it.
@@ -30,3 +23,8 @@ app.factory('TodoConstants', function(FluxUtil) {
   changes propagate down but not up, allowing you to keep the data in
   sync with wider application changes while controlling when the local
   state triggers an action.
+
+Just read
+[todo-app.js](https://github.com/brentvatne/angular-flux/blob/master/demos/simple-todo/todo-app.js)
+and it will make sense if you're already familiar with the Flux
+architecture.
