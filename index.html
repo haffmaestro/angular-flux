@@ -21,8 +21,12 @@
     </form>
 
     <ul>
-      <li ng-repeat="todo in todos">
-        {{todo.title}}
+      <li ng-repeat="todo in todos track by todo.id">
+        <input type="checkbox" ng-click="toggleComplete(todo)"
+              ng-checked="todo.complete">
+          {{todo.title}}
+        </input>
+        <a ng-click="removeTodo(todo)" href="">Remove</a>
       </li>
     </ul>
   </script>

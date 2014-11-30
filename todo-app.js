@@ -40,7 +40,7 @@ function TodoActions(TodoConstants, TodoDispatcher) {
         actionType: TodoConstants.INCOMPLETE_TODO,
         index: i
       });
-    },
+    }
   }
 }
 
@@ -56,9 +56,12 @@ function TodoDispatcher(FluxUtil) {
 }
 
 function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
-  var _todos = [];
+  var _todos = [],
+      _id = 0;
 
   function _addItem(item) {
+    _id++;
+    item.id = _id;
     _todos.push(item);
   }
 
@@ -67,11 +70,11 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
   }
 
   function _completeItem(i) {
-    _todos[i].completed = true;
+    _todos[i].complete = true;
   }
 
   function _incompleteItem(i) {
-    _todos[i].completed = false;
+    _todos[i].complete = false;
   }
 
   var store = FluxUtil.createStore({
@@ -121,6 +124,20 @@ function todoList(TodoActions, TodoStore) {
         TodoActions.addTodo(angular.copy($scope.newTodo));
         $scope.newTodo = {};
       };
+
+      $scope.removeTodo = function(todo) {
+        TodoActions.removeTodo($scope.todos.indexOf(todo));
+      }
+
+      $scope.toggleComplete = function(todo) {
+        var index = $scope.todos.indexOf(todo);
+
+        if (todo.complete) {
+          TodoActions.incompleteTodo(index);
+        } else {
+          TodoActions.completeTodo(index);
+        }
+      }
 
       $scope.updateTodosFromStore = function() {
         $scope.todos = TodoStore.getTodos();
