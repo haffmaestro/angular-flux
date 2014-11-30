@@ -1,11 +1,14 @@
-
+body {
+  padding-bottom: 20px;
+}
 pre {
   min-height: 150px;
   margin-top: 0 !important;
-  font-size: 10px;
-  padding: 5px;
+  padding: 10px;
   margin-left: 10px;
   color: #888;
+  line-height: 11px;
+  font-size: 9px;
 }
 
 input[type=checkbox] {
@@ -13,24 +16,24 @@ input[type=checkbox] {
   display: inline-block;
 }
 
-.todo-form {
+.todo-list--form {
   position: relative;
   padding-bottom: 15px;
   margin-bottom: 15px;
   border-bottom: 1px dashed #ccc;
 }
 
-.todo-form input[type=text] {
+.todo-list--form input[type=text] {
   margin-bottom: 0;
   height: 39px;
   padding-right: 120px;
 }
 
-.todo-form input[type=text]:focus {
+.todo-list--form input[type=text]:focus {
   outline: none;
 }
 
-.todo-form input[type=submit] {
+.todo-list--form input[type=submit] {
   border-radius: 0;
   position: absolute;
   margin-top: 0;
@@ -38,4 +41,47 @@ input[type=checkbox] {
   text-align: center;
   top: 0px;
   right: 0;
+}
+
+.todo-list-item {
+  height: 33px;
+  background: #F7F7F7;
+  line-height: 33px;
+  vertical-align: middle;
+  overflow: hidden;
+  border-bottom: 1px solid #E9E9E9;
+  padding-left: 5px;
+}
+
+.todo-list-item--title {
+  display: inline-block;
+  padding-left: 3px;
+}
+
+.todo-list-item--title:focus {
+  outline: none;
+}
+
+.todo-list-item--remove-button {
+  float: right;
+  padding: 2px 8px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.todo-list-item--remove-button:hover {
+  opacity: 0.5;
+}
+
+.todo-bulk-actions {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+
+.todo-bulk-actions > .btn {
+  margin-right: 5px;
+}
+
+.todo-list-column {
 }

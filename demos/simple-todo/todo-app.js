@@ -1,16 +1,20 @@
-var app = angular.module('todoApp', ['ngFlux']).
+var app = angular.module('todoApp', ['ngFlux', 'contenteditable']).
   factory('TodoActions', TodoActions).
   factory('TodoConstants', TodoConstants).
   factory('TodoDispatcher', TodoDispatcher).
   factory('TodoStore', TodoStore).
   directive('todoList', todoList).
   directive('todoListItem', todoListItem).
-  directive('rawTodoData', rawTodoData)
+  directive('rawTodoData', rawTodoData).
+  directive('markTodosCompleteButton', markTodosCompleteButton).
+  directive('clearCompletedButton', clearCompletedButton);
+
 
 
 function TodoConstants(FluxUtil) {
   return FluxUtil.defineConstants([
-    'ADD_TODO', 'REMOVE_TODO', 'COMPLETE_TODO', 'INCOMPLETE_TODO'
+    'ADD_TODO', 'REMOVE_TODO', 'COMPLETE_TODO', 'INCOMPLETE_TODO',
+    'UPDATE_TITLE', 'MARK_TODOS_COMPLETE', 'CLEAR_COMPLETED'
   ]);
 }
 
@@ -42,6 +46,26 @@ function TodoActions(TodoConstants, TodoDispatcher) {
         actionType: TodoConstants.INCOMPLETE_TODO,
         item: item
       });
+    },
+
+    updateTitle: function(item, title) {
+      TodoDispatcher.handleViewAction({
+        actionType: TodoConstants.UPDATE_TITLE,
+        item: item,
+        title: title
+      });
+    },
+
+    markTodosComplete: function() {
+      TodoDispatcher.handleViewAction({
+        actionType: TodoConstants.MARK_TODOS_COMPLETE
+      });
+    },
+
+    clearCompleted: function() {
+      TodoDispatcher.handleViewAction({
+        actionType: TodoConstants.CLEAR_COMPLETED
+      });
     }
   }
 }
@@ -67,24 +91,72 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
     _todos.push(item);
   }
 
+  function _findItem(item) {
+    var result = null;
+
+    angular.forEach(_todos, function(current) {
+      if (item.id == current.id) {
+        result = current;
+      }
+    });
+
+    return result;
+  }
+
+  function _findItemIndex(item) {
+    return _todos.indexOf(_findItem(item));
+  }
+
   function _removeItem(item) {
-    var index = _todos.indexOf(item);
+    var index = _findItemIndex(item);
     _todos.splice(index, 1);
   }
 
   function _completeItem(item) {
-    var index = _todos.indexOf(item);
+    var index = _findItemIndex(item);
     _todos[index].complete = true;
   }
 
   function _incompleteItem(item) {
-    var index = _todos.indexOf(item);
+    var index = _findItemIndex(item);
     _todos[index].complete = false;
+  }
+
+  function _updateTitle(item, title) {
+    var index = _findItemIndex(item);
+    _todos[index].title = title;
+  }
+
+  function _markTodosComplete() {
+    angular.forEach(_todos, function(todo) {
+      todo.complete = true;
+    });
+  }
+
+  function _clearCompleted() {
+    angular.forEach(_getCompleted(), function(todo) {
+      _removeItem(todo);
+    });
+  }
+
+  function _getCompleted() {
+    var result = [];
+    angular.forEach(_todos, function(todo) {
+      if (todo.complete == true) {
+        result.push(todo)
+      }
+    });
+
+    return result;
   }
 
   var store = FluxUtil.createStore({
     getTodos: function() {
       return _todos;
+    },
+
+    getCompletedTodos: function() {
+      return _getCompleted();
     },
 
     dispatcherIndex: TodoDispatcher.register(function(payload) {
@@ -105,6 +177,18 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
 
         case TodoConstants.INCOMPLETE_TODO:
           _incompleteItem(action.item);
+          break;
+
+        case TodoConstants.UPDATE_TITLE:
+          _updateTitle(action.item, action.title);
+          break;
+
+        case TodoConstants.MARK_TODOS_COMPLETE:
+          _markTodosComplete();
+          break;
+
+        case TodoConstants.CLEAR_COMPLETED:
+          _clearCompleted();
           break;
       }
 
@@ -136,10 +220,10 @@ function todoList(TodoActions, TodoStore) {
   }
 }
 
+
 function todoListItem(TodoActions) {
   return {
     restrict: 'E',
-    scope: {todo: '='},
     templateUrl: "todo-list-item.html",
     controller: function($scope) {
       $scope.removeTodo = function() {
@@ -153,6 +237,10 @@ function todoListItem(TodoActions) {
           TodoActions.completeTodo($scope.todo);
         }
       }
+
+      $scope.titleChanged = function() {
+        TodoActions.updateTitle($scope.todo, $scope.todo.title);
+      }
     }
   }
 }
@@ -165,6 +253,44 @@ function rawTodoData(TodoStore) {
       TodoStore.bindState($scope, function updateTodosFromStore() {
         $scope.todos = TodoStore.getTodos();
       });
+    }
+  }
+}
+
+function markTodosCompleteButton(TodoActions, TodoStore) {
+  return {
+    restrict: 'E',
+    replace: true,
+    scope: {},
+    template:
+      "<a href='' ng-show='isVisible()' ng-click='perform()' class='btn btn--green col-2'>Mark all todos complete</a>",
+    controller: function($scope) {
+      $scope.isVisible = function() {
+        return TodoStore.getTodos().length > 0;
+      }
+
+      $scope.perform = function() {
+        TodoActions.markTodosComplete();
+      }
+    }
+  }
+}
+
+function clearCompletedButton(TodoActions, TodoStore) {
+  return {
+    restrict: 'E',
+    replace: true,
+    scope: {},
+    template:
+      "<a href='' ng-show='isVisible()' ng-click='perform()' class='btn btn--blue col-2'>Clear completed todos</a>",
+    controller: function($scope) {
+      $scope.isVisible = function() {
+        return TodoStore.getCompletedTodos().length > 0;
+      }
+
+      $scope.perform = function() {
+        TodoActions.clearCompleted();
+      }
     }
   }
 }

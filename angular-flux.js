@@ -3,7 +3,8 @@ angular.module('ngFlux', []).
   factory('FluxInvariant', FluxInvariant).
   factory('FluxDispatcher', FluxDispatcher).
   factory('FluxEventEmitter', FluxEventEmitter).
-  factory('FluxStore', FluxStore)
+  factory('FluxStore', FluxStore).
+  directive('localizeState', localizeState);
 
 function FluxUtil(FluxDispatcher, FluxStore) {
   return {
@@ -817,4 +818,30 @@ function FluxStore(FluxEventEmitter) {
       if (options.bindImmediately === true) { callback(); }
     }
   });
+}
+
+// We want data to be able to propagate down onto the component, but we want
+// to control when any state changes from the component leave it, so we
+// create a copy of the object that we can edit locally and watch for changes
+// on the original, updating the copy when changes occur.
+//
+// <todo-list-item localize-state="{name: 'todo', value: todo}" ng-repeat="todo in todos">
+//
+// This creates $scope.todo that will update whenever the binding in the repeater updates,
+// but the changes that occur on $scope.todo from within the component do affect the repeater
+// binding directly.
+//
+function localizeState() {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+      var syncLocalState = function() {
+        scope[attrs.localizeState.name] = angular.copy(scope._localState);
+      }
+
+      scope._localState = attrs.localizeState.value;
+      scope.$watch('_localState', syncLocalState, true);
+      syncLocalState();
+    }
+  }
 }
