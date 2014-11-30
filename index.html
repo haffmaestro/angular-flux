@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Todo - Angular.js Flux</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.4/angular.min.js"></script>
+
+    <script src="angular-flux.js"></script>
+    <script src="todo-app.js"></script>
+  </head>
+
+  <body>
+
+  </body>
+
+  <script id="todo-list.html" type="text/ng-template">
+    <h1>Todo list!</h1>
+
+    <form ng-submit="createTodo()">
+      <input ng-model="newTodo.title" placeholder="Enter a todo" />
+      <input type="submit" value="Add to list" />
+    </form>
+
+    <ul>
+      <li ng-repeat="todo in todos">
+        {{todo.title}}
+      </li>
+    </ul>
+  </script>
+
+  <body ng-app="todoApp">
+    <todo-list />
+  </body>
+</html>
