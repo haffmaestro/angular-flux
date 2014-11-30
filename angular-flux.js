@@ -7,7 +7,7 @@ angular.module('ngFlux', []).
   directive('localizeState', localizeState);
 
 function FluxUtil(FluxDispatcher, FluxStore) {
-  return {
+  var util = {
     defineConstants: function(constantNames) {
       var constants = {};
       angular.forEach(constantNames, (function(constantName) {
@@ -17,8 +17,22 @@ function FluxUtil(FluxDispatcher, FluxStore) {
       return constants;
     },
 
+    // Save the boilerplate of defining handleViewAction..
+    //
     createDispatcher: function(options) {
-      var dispatcher = angular.extend(FluxDispatcher.prototype, options);
+      var dispatcher;
+
+      // Default create a handleViewAction function
+      options = options || {
+        handleViewAction: function(action) {
+          this.dispatch({
+            source: 'VIEW_ACTION',
+            action: action
+          })
+        }
+      }
+
+      dispatcher = angular.extend(FluxDispatcher.prototype, options);
       dispatcher.constructor();
       return dispatcher;
     },
@@ -27,6 +41,8 @@ function FluxUtil(FluxDispatcher, FluxStore) {
       return angular.extend(FluxStore, options);
     }
   }
+
+  return util;
 }
 
 function FluxInvariant() {
@@ -786,8 +802,8 @@ function FluxEventEmitter() {
 
 function FluxStore(FluxEventEmitter) {
   return angular.extend(FluxEventEmitter.prototype, {
-    emitChange: function() {
-      this.emit('change');
+    emitChange: function(data) {
+      this.emit('change', data);
     },
 
     addChangeListener: function(callback) {

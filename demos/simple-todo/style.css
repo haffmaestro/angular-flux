@@ -1,8 +1,8 @@
 body {
   padding-bottom: 20px;
 }
+
 pre {
-  min-height: 150px;
   margin-top: 0 !important;
   padding: 10px;
   margin-left: 10px;
@@ -20,7 +20,6 @@ input[type=checkbox] {
   position: relative;
   padding-bottom: 15px;
   margin-bottom: 15px;
-  border-bottom: 1px dashed #ccc;
 }
 
 .todo-list--form input[type=text] {
@@ -75,13 +74,9 @@ input[type=checkbox] {
 
 .todo-bulk-actions {
   padding-top: 10px;
-  margin-top: 10px;
-  border-top: 1px dashed #ccc;
+  margin-top: 15px;
 }
 
 .todo-bulk-actions > .btn {
   margin-right: 5px;
-}
-
-.todo-list-column {
 }

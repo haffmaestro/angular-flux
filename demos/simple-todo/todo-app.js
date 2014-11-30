@@ -10,7 +10,6 @@ var app = angular.module('todoApp', ['ngFlux', 'contenteditable']).
   directive('clearCompletedButton', clearCompletedButton);
 
 
-
 function TodoConstants(FluxUtil) {
   return FluxUtil.defineConstants([
     'ADD_TODO', 'REMOVE_TODO', 'COMPLETE_TODO', 'INCOMPLETE_TODO',
@@ -18,6 +17,9 @@ function TodoConstants(FluxUtil) {
   ]);
 }
 
+// ** Boilerplate! The only value we get here is being able to specify
+// how the 'payload' is structured. **
+//
 function TodoActions(TodoConstants, TodoDispatcher) {
   return {
     addTodo: function(item) {
@@ -71,14 +73,7 @@ function TodoActions(TodoConstants, TodoDispatcher) {
 }
 
 function TodoDispatcher(FluxUtil) {
-  return FluxUtil.createDispatcher({
-    handleViewAction: function(action) {
-      this.dispatch({
-        source: 'VIEW_ACTION',
-        action: action
-      })
-    }
-  });
+  return FluxUtil.createDispatcher();
 }
 
 function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
@@ -159,6 +154,9 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
       return _getCompleted();
     },
 
+    // ** Boilerplate! This is just linking up the constants with
+    // the appropriate function on the store **
+    //
     dispatcherIndex: TodoDispatcher.register(function(payload) {
       var action = payload.action;
 
@@ -192,7 +190,7 @@ function TodoStore(TodoDispatcher, TodoConstants, FluxUtil) {
           break;
       }
 
-      store.emitChange();
+      store.emitChange(action);
 
       return true;
     })
@@ -219,7 +217,6 @@ function todoList(TodoActions, TodoStore) {
     }
   }
 }
-
 
 function todoListItem(TodoActions) {
   return {
@@ -262,8 +259,7 @@ function markTodosCompleteButton(TodoActions, TodoStore) {
     restrict: 'E',
     replace: true,
     scope: {},
-    template:
-      "<a href='' ng-show='isVisible()' ng-click='perform()' class='btn btn--green col-2'>Mark all todos complete</a>",
+    templateUrl: 'mark-todos-complete-button.html',
     controller: function($scope) {
       $scope.isVisible = function() {
         return TodoStore.getTodos().length > 0;
@@ -281,8 +277,7 @@ function clearCompletedButton(TodoActions, TodoStore) {
     restrict: 'E',
     replace: true,
     scope: {},
-    template:
-      "<a href='' ng-show='isVisible()' ng-click='perform()' class='btn btn--blue col-2'>Clear completed todos</a>",
+    templateUrl: 'clear-completed-button.html',
     controller: function($scope) {
       $scope.isVisible = function() {
         return TodoStore.getCompletedTodos().length > 0;
