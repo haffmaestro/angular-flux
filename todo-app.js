@@ -7,7 +7,7 @@ var app = angular.module('todoApp', ['ngFlux']).
 
 
 function TodoConstants(FluxUtil) {
-  return FluxUtil.createActions([
+  return FluxUtil.defineConstants([
     'ADD_TODO', 'REMOVE_TODO', 'COMPLETE_TODO', 'INCOMPLETE_TODO'
   ]);
 }

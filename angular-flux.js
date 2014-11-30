@@ -7,13 +7,13 @@ angular.module('ngFlux', []).
 
 function FluxUtil(FluxDispatcher, FluxStore) {
   return {
-    createActions: function(actionNames) {
-      var actions = {};
-      angular.forEach(actionNames, (function(actionName) {
-        actions[actionName] = actionName;
+    defineConstants: function(constantNames) {
+      var constants = {};
+      angular.forEach(constantNames, (function(constantName) {
+        constants[constantName] = constantName;
       }));
 
-      return actions;
+      return constants;
     },
 
     createDispatcher: function(options) {
