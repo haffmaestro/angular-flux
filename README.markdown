@@ -28,3 +28,9 @@ Just read
 [todo-app.js](https://github.com/brentvatne/angular-flux/blob/master/demos/simple-todo/todo-app.js)
 and it will make sense if you're already familiar with the Flux
 architecture.
+
+## TODO
+
+- Implement the
+  [flux-chat](https://github.com/facebook/flux/tree/master/examples/flux-chat)
+  example app
