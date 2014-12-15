@@ -30,6 +30,12 @@
               source: 'VIEW_ACTION',
               action: action
             })
+          },
+          handleServerAction: function(action) {
+            this.dispatch({
+              source: 'SERVER_ACTION',
+              action: action
+            })
           }
         }
 
@@ -803,6 +809,16 @@
 
   function FluxStore(FluxEventEmitter) {
     return angular.extend(FluxEventEmitter.prototype, {
+      bindToScope: function(scope, event, callback, options) {
+        var self = this;
+
+        self.on(event, callback);
+
+        scope.$on('$destroy', function() {
+          self.removeListener(event, callback)
+        });
+      },
+
       emitChange: function(data) {
         this.emit('change', data);
       },
@@ -823,7 +839,7 @@
         var self = this;
 
         self.addChangeListener(callback);
-        scope.$on('$destroy', function() { self.removeListener(callback) });
+        scope.$on('$destroy', function() { self.removeChangeListener(callback) });
 
         // Save the hassle of having to create a separate function, pass
         // it in to bindState, and then call it immediately on the scope
