@@ -24,10 +24,13 @@ your app with the module `ngFlux`. Install it through bower with
   sync with wider application changes while controlling when the local
   state triggers an action.
 
-Just read
+## Examples
+
 [todo-app.js](https://github.com/brentvatne/angular-flux/blob/master/demos/simple-todo/todo-app.js)
 and it will make sense if you're already familiar with the Flux
 architecture.
+
+[Flix](https://github.com/brentvatne/flix) is an Android app (based on the Ionic Framework) that uses angular-flux. See [/frontend/www/js/](https://github.com/brentvatne/flix/tree/master/frontend/www/js)
 
 ## TODO
 
