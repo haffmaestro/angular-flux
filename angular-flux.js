@@ -1,10 +1,10 @@
 (function() {
   angular.module('ngFlux', []).
-    factory('FluxUtil', FluxUtil).
+    factory('FluxUtil', ['FluxDispatcher', 'FluxStore', FluxUtil]).
     factory('FluxInvariant', FluxInvariant).
-    factory('FluxDispatcher', FluxDispatcher).
+    factory('FluxDispatcher', ['FluxInvariant', FluxDispatcher]).
     factory('FluxEventEmitter', FluxEventEmitter).
-    factory('FluxStore', FluxStore).
+    factory('FluxStore',['FluxEventEmitter', FluxStore]).
     directive('localizeState', localizeState);
 
   function FluxUtil(FluxDispatcher, FluxStore) {
