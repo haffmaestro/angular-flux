@@ -22,7 +22,8 @@ your app with the module `ngFlux`. Install it through bower with
 - The `localize-state` directive creates a one way data binding, so
   changes propagate down but not up, allowing you to keep the data in
   sync with wider application changes while controlling when the local
-  state triggers an action.
+  state triggers an action. 
+  This directive is not needed to propagate changes, normal angular data-binding works better.
 
 ## Examples
 
