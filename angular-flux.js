@@ -45,7 +45,7 @@
       },
 
       createStore: function(options) {
-        return angular.extend(FluxStore, options);
+        return angular.extend({}, FluxStore, options);
       }
     }
 
