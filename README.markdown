@@ -1,6 +1,7 @@
 ## Angular with Flux Architecture
 
-An attempt to try out the Flux architecture with Angular... check out
+Flux implementation in Angular 1, used in production at [Rise](rise.xyz)  
+
 `demos/simple-todo/index.html` & `demos/simple-todo/todo-app.js` for to
 see it in action.
 
